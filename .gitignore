@@ -1,0 +1,8 @@
+# Mac files
+.DS_Store
+
+# Data (Personal asset data)
+data/state.json
+
+# Binaries
+geo-hedger
