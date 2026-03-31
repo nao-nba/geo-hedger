@@ -35,3 +35,28 @@ type State struct {
 }
 
 // TODO: 比率の計算や差分を出す「関数（ロジック）」を後から追加していく
+
+// Portfolioの中にあるすべての資産（円換算）の合計を計算
+// レート換算後の値をEvaluatedPortfolioと仮定。換算する工程を後日実装する
+func (p *EvaluatedPortfolio) CalculateTotal() float64 {
+	total := 0.0
+
+	// 通貨（Currencies）の合計
+	for _, amount := range p.Currencies {
+		total += amount
+	}
+	// 西側リスク（WesternRisk）の合計
+	for _, amount := range p.WesternRisk {
+		total += amount
+	}
+	// 東側リスク（EasternRisk）の合計
+	for _, amount := range p.EasternRisk {
+		total += amount
+	}
+	// 無国籍リスク（StatelessRisk）の合計
+	for _, amount := range p.StatelessRisk {
+		total += amount
+	}
+
+	return total
+}
