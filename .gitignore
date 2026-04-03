@@ -4,7 +4,7 @@
 # Data (Personal asset data)
 data/state.json
 
-# Binaries
-geo-hedger
+# Binaries (実行ファイルのみを無視)
+/geo-hedger
 
 .env

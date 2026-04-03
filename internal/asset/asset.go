@@ -8,6 +8,14 @@ import (
 // 例: {"USD": 150.5, "GLD": 30000}
 type Rates map[string]float64
 
+type SymbolInfo struct {
+	Rate     float64
+	Category string
+}
+
+// ★新規追加: シンボル名をキーとした詳細情報のマップ
+type SymbolMap map[string]SymbolInfo
+
 // 正常にレートが引けるかチェックする補助関数
 func (r Rates) GetRate(symbol string) (float64, bool) {
 	rate, ok := r[symbol]

@@ -9,24 +9,21 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/nao-nba/geo-hedger/internal/asset"
-
 )
 
-func FetchRatesFromCSV() (asset.Rates, error) {
-	// 1. .envファイルを読み込む
+// FetchSymbolMapFromCSV は環境変数のURLからレートとカテゴリーのマップを取得する
+func FetchSymbolMapFromCSV() (asset.SymbolMap, error) {
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("INFO: .env file not found, using system environment variables")
 	}
 
-	// 2. 環境変数からURLを取得
 	csvURL := os.Getenv("GEO_HEDGER_CSV_URL")
 	if csvURL == "" {
 		return nil, fmt.Errorf("環境変数 GEO_HEDGER_CSV_URL が設定されていません")
 	}
 
-	rates := make(asset.Rates)
+	symbolMap := make(asset.SymbolMap)
 
-	// 3. HTTPリクエストでCSVデータを取得
 	resp, err := http.Get(csvURL)
 	if err != nil {
 		return nil, fmt.Errorf("HTTPリクエストに失敗しました: %w", err)
@@ -37,32 +34,36 @@ func FetchRatesFromCSV() (asset.Rates, error) {
 		return nil, fmt.Errorf("サーバーがエラーを返しました: %d", resp.StatusCode)
 	}
 
-	// 4. CSVをパース
 	reader := csv.NewReader(resp.Body)
 	records, err := reader.ReadAll()
 	if err != nil {
 		return nil, fmt.Errorf("CSVのパースに失敗しました: %w", err)
 	}
 
-	// 5. 1行ずつ読み込んでマップに格納
 	for i, record := range records {
 		if i == 0 {
-			continue
+			continue // ヘッダーをスキップ
 		}
-		if len(record) < 2 {
+		// A列, B列, C列の3つが必要
+		if len(record) < 3 {
 			continue 
 		}
 
 		symbol := record[0]
 		rateStr := record[1]
+		category := record[2] // C列を取得
 
 		rate, err := strconv.ParseFloat(rateStr, 64)
 		if err != nil {
 			continue
 		}
 
-		rates[symbol] = rate
+		// マップに構造体として格納
+		symbolMap[symbol] = asset.SymbolInfo{
+			Rate:     rate,
+			Category: category,
+		}
 	}
 
-	return rates, nil
+	return symbolMap, nil
 }
