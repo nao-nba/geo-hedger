@@ -1,3 +1,4 @@
+// スプレッドシートから市場レートのCSVを取得する
 package io
 
 import (

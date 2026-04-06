@@ -1,3 +1,4 @@
+// asset.goで定義したものをstate.jsonに保存したり、逆に読み込んだりする
 package io
 
 import (
